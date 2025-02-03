@@ -1,6 +1,10 @@
-streamlit
 pandas
+numpy
 scikit-learn
-joblib
 matplotlib
 seaborn
+streamlit
+pyyaml
+joblib
+ensure
+box

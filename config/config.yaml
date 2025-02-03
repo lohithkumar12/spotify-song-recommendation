@@ -1,0 +1,5 @@
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  dataset_path: data/rolling_stones_spotify.csv  # Updated from cleaned_data.csv
+  cleaned_dataset_path: data/cleaned_data.csv   # Path where cleaned file will be saved
+

@@ -1,0 +1,3 @@
+model_trainer:
+  num_clusters: 5
+  random_state: 42
