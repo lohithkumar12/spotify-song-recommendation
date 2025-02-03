@@ -8,7 +8,9 @@ project_name = "spotify_recommendation"
 
 list_of_files = [
     ".github/workflows/main.yml",
-    "data_schema/schema.yaml",
+    "config/config.yaml",
+    "config/schema.yaml",
+    "config/params.yaml",
     "final_model/model.pkl",
     "final_model/preprocessor.pkl",
     "data/cleaned_data.csv",
@@ -21,7 +23,7 @@ list_of_files = [
     f"{project_name}/components/data_transformation.py",
     f"{project_name}/components/model_trainer.py",
     f"{project_name}/components/model_evaluation.py",
-    f"{project_name}/constant/__init__.py",
+    f"{project_name}/constants/__init__.py",
     f"{project_name}/entity/__init__.py",
     f"{project_name}/entity/config_entity.py",
     f"{project_name}/exception/__init__.py",
