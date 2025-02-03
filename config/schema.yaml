@@ -1,3 +1,18 @@
-model_trainer:
-  num_clusters: 5
-  random_state: 42
+columns:
+  name: str
+  album: str
+  release_date: str
+  track_number: int64
+  id: str
+  uri: str
+  acousticness: float64
+  danceability: float64
+  energy: float64
+  instrumentalness: float64
+  liveness: float64
+  loudness: float64
+  speechiness: float64
+  tempo: float64
+  valence: float64
+  popularity: int64
+  duration_ms: int64

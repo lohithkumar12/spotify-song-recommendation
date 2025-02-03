@@ -10,7 +10,10 @@ class DataIngestionConfig:
 @dataclass
 class DataValidationConfig:
     root_dir: Path
+    dataset_path: Path 
     status_file: Path
+    schema: dict  # Stores expected schema from schema.yaml
+
 
 @dataclass
 class DataTransformationConfig:

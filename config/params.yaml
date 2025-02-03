@@ -1,16 +1,3 @@
-columns:
-  name: str
-  album: str
-  danceability: float64
-  energy: float64
-  loudness: float64
-  speechiness: float64
-  acousticness: float64
-  instrumentalness: float64
-  liveness: float64
-  valence: float64
-  tempo: float64
-  duration_ms: int64
-  popularity: int64
-  release_year: int64
-  song_age: int64
+model_trainer:
+  num_clusters: 5
+  random_state: 42

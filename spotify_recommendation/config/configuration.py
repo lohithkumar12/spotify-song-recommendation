@@ -25,5 +25,19 @@ class ConfigurationManager:
             root_dir=config["root_dir"],
             dataset_path=config["dataset_path"]
         )
+    
+    def get_data_validation_config(self) -> DataValidationConfig:
+        """Retrieves data validation configurations from config.yaml."""
+        config = self.config["data_validation"]
+        schema = self.schema["columns"]  # Load expected schema from schema.yaml
+
+        return DataValidationConfig(
+            root_dir=config["root_dir"],
+            dataset_path=self.config["data_ingestion"]["dataset_path"], 
+            status_file=config["status_file"],
+            schema=schema
+        )
+
+
 
 
