@@ -37,6 +37,23 @@ class ConfigurationManager:
             status_file=config["status_file"],
             schema=schema
         )
+    
+    def get_data_transformation_config(self) -> DataTransformationConfig:
+        """Retrieves data transformation configurations from config.yaml."""
+        config = self.config["data_transformation"]
+
+        return DataTransformationConfig(
+            root_dir=config["root_dir"],
+            transformed_data=config["transformed_data"],
+            raw_data_path=config["raw_data_path"],  
+            processed_data_dir=config["processed_data_dir"], 
+            song_mapping_path=config["song_mapping_path"]
+        )
+
+
+
+
+
 
 
 

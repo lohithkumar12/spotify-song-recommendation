@@ -19,6 +19,11 @@ class DataValidationConfig:
 class DataTransformationConfig:
     root_dir: Path
     transformed_data: Path
+    raw_data_path: Path
+    processed_data_dir: Path
+    song_mapping_path: Path
+
+
 
 @dataclass
 class ModelTrainerConfig:

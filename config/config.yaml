@@ -6,3 +6,15 @@ data_ingestion:
 data_validation:
   root_dir: artifacts/data_validation
   status_file: artifacts/data_validation/status.txt
+
+data_transformation:
+  root_dir: artifacts/data_transformation
+  transformed_data: artifacts/data_transformation/transformed_data.csv
+  raw_data_path: data/rolling_stones_spotify.csv
+  processed_data_dir: artifacts/data_transformation
+  song_mapping_path: data/song_name_mapping.csv
+
+
+
+
+
