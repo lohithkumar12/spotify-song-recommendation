@@ -1,7 +1,7 @@
 from spotify_recommendation.utils.common import read_yaml, create_directories
 from spotify_recommendation.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH, SCHEMA_FILE_PATH
 from spotify_recommendation.entity.config_entity import (
-    DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluationConfig
+    DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluationConfig, RecommendationConfig
 )
 
 class ConfigurationManager:
@@ -70,6 +70,18 @@ class ConfigurationManager:
             root_dir=config["root_dir"],
             evaluation_report=config["evaluation_report"]
         )
+    
+    def get_recommendation_config(self) -> RecommendationConfig:
+        """Retrieves recommendation system configurations from config.yaml."""
+        config = self.config["recommendation_system"]
+        
+        return RecommendationConfig(
+            root_dir=config["root_dir"],
+            clustered_data_path=config["clustered_data_path"],
+            model_path=config["model_path"]
+        )
+
+
 
 
 

@@ -36,3 +36,9 @@ class ModelTrainerConfig:
 class ModelEvaluationConfig:
     root_dir: Path
     evaluation_report: Path
+
+@dataclass
+class RecommendationConfig:
+    root_dir: Path
+    clustered_data_path: Path
+    model_path: Path
