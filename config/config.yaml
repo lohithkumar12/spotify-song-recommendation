@@ -14,6 +14,13 @@ data_transformation:
   processed_data_dir: artifacts/data_transformation
   song_mapping_path: data/song_name_mapping.csv
 
+model_trainer:
+  root_dir: artifacts/model_trainer
+  model_path: artifacts/model_trainer/kmeans_model.pkl
+  preprocessor_path: artifacts/model_trainer/scaler.pkl
+  num_clusters: 5
+
+
 
 
 

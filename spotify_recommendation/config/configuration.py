@@ -49,6 +49,19 @@ class ConfigurationManager:
             processed_data_dir=config["processed_data_dir"], 
             song_mapping_path=config["song_mapping_path"]
         )
+    
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        """Retrieves model training configurations from config.yaml and params.yaml."""
+        config = self.config["model_trainer"]
+        params = self.params["model_trainer"]  
+
+        return ModelTrainerConfig(
+            root_dir=config["root_dir"],
+            model_path=config["model_path"],
+            preprocessor_path=config["preprocessor_path"],
+            num_clusters=params["num_clusters"]  
+        )
+
 
 
 

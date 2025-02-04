@@ -31,3 +31,4 @@ class ModelTrainerConfig:
     model_path: Path
     preprocessor_path: Path
     num_clusters: int
+
