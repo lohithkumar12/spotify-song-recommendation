@@ -1,7 +1,7 @@
 from spotify_recommendation.utils.common import read_yaml, create_directories
 from spotify_recommendation.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH, SCHEMA_FILE_PATH
 from spotify_recommendation.entity.config_entity import (
-    DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
+    DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluationConfig
 )
 
 class ConfigurationManager:
@@ -61,6 +61,16 @@ class ConfigurationManager:
             preprocessor_path=config["preprocessor_path"],
             num_clusters=params["num_clusters"]  
         )
+    
+    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+        """Retrieves model evaluation configurations from config.yaml."""
+        config = self.config["model_evaluation"]
+        
+        return ModelEvaluationConfig(
+            root_dir=config["root_dir"],
+            evaluation_report=config["evaluation_report"]
+        )
+
 
 
 

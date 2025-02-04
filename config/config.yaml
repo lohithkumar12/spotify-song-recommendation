@@ -20,6 +20,10 @@ model_trainer:
   preprocessor_path: artifacts/model_trainer/scaler.pkl
   num_clusters: 5
 
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+  evaluation_report: artifacts/model_evaluation/evaluation_report.json
+
 
 
 

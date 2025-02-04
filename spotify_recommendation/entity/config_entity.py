@@ -32,3 +32,7 @@ class ModelTrainerConfig:
     preprocessor_path: Path
     num_clusters: int
 
+@dataclass
+class ModelEvaluationConfig:
+    root_dir: Path
+    evaluation_report: Path
