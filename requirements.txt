@@ -7,6 +7,4 @@ streamlit
 pyyaml
 joblib
 ensure
-box
-boxsdk
 python-box
