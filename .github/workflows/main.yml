@@ -3,47 +3,40 @@ name: Deploy to Hugging Face Spaces 🚀
 on:
   push:
     branches:
-      - main  # Trigger deployment when pushing to main
+      - main  # Deploy when changes are pushed to the main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Prevents shallow update errors
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
-          python-version: '3.12'
+          python-version: 3.10  # Match Python version used in Hugging Face
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt || echo "No requirements.txt found"
-
-      - name: Set up GitHub authentication
-        run: |
-          git config --global user.email "vemuboddupalli@gmail.com"
-          git config --global user.name "lohithkumar12"
+          pip install -r requirements.txt
 
       - name: Ensure Hugging Face Remote Exists
+        env:
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}  # Hugging Face Username
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Hugging Face API Token
         run: |
           git remote remove hf || echo "No previous remote found"
-          git remote add hf https://${{ secrets.HF_USERNAME }}:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git
+          git remote add hf https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git
           git remote -v  # Verify remote URLs
 
-      - name: Fix Merge Conflicts (If Any)
+      - name: Remove Large Files Before Pushing
         run: |
-          git pull --rebase hf main || echo "Nothing to pull"
-          git rebase --continue || git rebase --skip || echo "Skipping rebase due to conflicts"
+          git rm -r --cached venv/ || echo "venv/ already removed"
+          git rm -r --cached **/*.pdb **/*.dll **/*.map || echo "Large files removed"
+          git commit -m "Excluded large files from deployment" || echo "No changes to commit"
 
       - name: Push to Hugging Face Spaces
         run: |
-          git push hf main --force  # Full push to avoid shallow clone issues
-        env:
-          HF_USERNAME: ${{ secrets.HF_USERNAME }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          git push hf main --force
