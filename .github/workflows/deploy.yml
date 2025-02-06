@@ -1,9 +1,9 @@
-name: Deploy to Hugging Face Spaces 🚀
+name: Deploy to Hugging Face Spaces 
 
 on:
   push:
     branches:
-      - main  # Deploy when changes are pushed to the main branch
+      - main
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.12  # Use the same version as Hugging Face
+          python-version: 3.12
 
       - name: Install Dependencies
         run: |
@@ -45,5 +45,5 @@ jobs:
           git config --global user.name "lohithkumar12"
           git remote set-url origin "https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git"
           git add .
-          git commit -m "🚀 Auto-deploy from GitHub Actions" || echo "No new changes to commit"
+          git commit -m "Auto-deploy from GitHub Actions" || echo "No new changes to commit"
           git push origin main || echo "No new changes to push"
