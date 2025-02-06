@@ -38,7 +38,7 @@ The project is deployed using **Streamlit** on **Hugging Face Spaces** with CI/C
 ## **Installation & Setup**
 You can run this project locally using **Python & Streamlit**.
 
-### **Clone the Repository**
+### 1. **Clone the Repository**
 ```bash
 git clone https://github.com/lohithkumar12/spotify-song-recommendation.git
 cd spotify-song-recommendation
