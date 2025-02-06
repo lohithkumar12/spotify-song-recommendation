@@ -17,4 +17,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
+        run: git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
