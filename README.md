@@ -17,7 +17,7 @@ The project is deployed using **Streamlit** on **Hugging Face Spaces** with CI/C
 
 ---
 
-## 🚀 Features
+## Features
 ✅ **Cluster-based Song Recommendations** – Uses K-Means clustering to group similar songs.  
 ✅ **Interactive Streamlit UI** – Users can select a song and get recommendations in real-time.  
 ✅ **Visual Insights** – Displays **Cluster distribution & Top Albums** using charts.  
@@ -26,7 +26,7 @@ The project is deployed using **Streamlit** on **Hugging Face Spaces** with CI/C
 
 ---
 
-## 📊 **Technologies Used**
+## **Technologies Used**
 - **Machine Learning:** Scikit-Learn, K-Means Clustering
 - **Data Processing:** Pandas, NumPy
 - **Visualization:** Matplotlib, Seaborn, Streamlit
@@ -35,7 +35,7 @@ The project is deployed using **Streamlit** on **Hugging Face Spaces** with CI/C
 
 ---
 
-## ⚙️ **Installation & Setup**
+## **Installation & Setup**
 You can run this project locally using **Python & Streamlit**.
 
 ### **1️⃣ Clone the Repository**

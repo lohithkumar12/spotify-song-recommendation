@@ -1,20 +1,39 @@
-name: Sync to Hugging Face hub
+name: Sync to Hugging Face Hub 
+
 on:
   push:
     branches: [main]
-
-  # to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  sync-to-hub:
+  deploy-to-hf:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: 🛠 Checkout Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+
+      - name: Install Dependencies (Optional)
+        run: |
+          pip install -r requirements.txt || echo "Skipping dependency installation"
+
+      - name: Push to Hugging Face Hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
+        run: |
+          git config --global user.email "vemuboddupalli@gmail.com"
+          git config --global user.name "lohithkumar12"
+          git remote set-url origin "https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation"
+          git add .
+          git commit -m "Auto-sync with Hugging Face"
+          git push --force origin main
+
+      - name: Deployment Successful
+        if: success()
+        run: echo "Deployment completed successfully!"
+
+      - name: Deployment Failed
+        if: failure()
+        run: echo "Deployment failed! Please check logs."
