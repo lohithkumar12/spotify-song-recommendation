@@ -1,42 +1,20 @@
-name: Deploy to Hugging Face Spaces 🚀
-
+name: Sync to Hugging Face hub
 on:
   push:
-    branches:
-      - main  # Deploy when changes are pushed to the main branch
+    branches: [main]
+
+  # to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  sync-to-hub:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
+      - uses: actions/checkout@v3
         with:
-          python-version: 3.12
-
-      - name: Install Dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Ensure Hugging Face Remote Exists
+          fetch-depth: 0
+          lfs: true
+      - name: Push to hub
         env:
-          HF_USERNAME: ${{ secrets.HF_USERNAME }}  # Hugging Face Username
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}  # Hugging Face API Token
-        run: |
-          git remote remove hf || echo "No previous remote found"
-          git remote add hf https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git
-          git remote -v  # Verify remote URLs
-
-      - name: Remove Large Files Before Pushing
-        run: |
-          git rm -r --cached venv/ || echo "venv/ already removed"
-          git rm -r --cached **/*.pdb **/*.dll **/*.map || echo "Large files removed"
-          git commit -m "Excluded large files from deployment" || echo "No changes to commit"
-
-      - name: Push to Hugging Face Spaces
-        run: |
-          git push hf main --force
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: git push https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
