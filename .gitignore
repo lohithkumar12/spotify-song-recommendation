@@ -1,6 +1,5 @@
 venv/
 logs/
-artifacts/
 "venv/" 
 *.pdb
 *.dll
