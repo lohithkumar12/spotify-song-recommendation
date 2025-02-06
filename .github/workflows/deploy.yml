@@ -34,6 +34,11 @@ jobs:
             echo "No changes detected. Skipping deployment."
             echo "::set-output name=deploy::false"
           fi
+      - name: Pull latest changes before pushing
+        run: |
+            git pull --rebase origin main || echo "Nothing to pull"
+            git push origin main || echo "No new changes to push"
+        
 
       - name: Upload to Hugging Face Spaces
         if: steps.git-check.outputs.deploy == 'true'
