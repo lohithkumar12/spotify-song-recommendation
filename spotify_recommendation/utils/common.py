@@ -3,7 +3,8 @@ import yaml
 import json
 import joblib
 from ensure import ensure_annotations
-from box import ConfigBox
+#from box import ConfigBox
+from box.box import Box
 from pathlib import Path
 from typing import Any
 from box.exceptions import BoxValueError
@@ -11,13 +12,13 @@ from spotify_recommendation.logging import logger
 
 
 @ensure_annotations
-def read_yaml(path_to_yaml: Path) -> ConfigBox:
+def read_yaml(path_to_yaml: Path) -> Box:
     """Reads a YAML file and returns its contents as a ConfigBox object."""
     try:
         with open(path_to_yaml, "r") as yaml_file:
             content = yaml.safe_load(yaml_file)
             logger.info(f"YAML file {path_to_yaml} loaded successfully.")
-            return ConfigBox(content)
+            return Box(content)
     except BoxValueError:
         raise ValueError(f" YAML file {path_to_yaml} is empty.")
     except Exception as e:
@@ -42,12 +43,12 @@ def save_json(path: Path, data: dict):
 
 
 @ensure_annotations
-def load_json(path: Path) -> ConfigBox:
+def load_json(path: Path) -> Box:
     """Loads data from a JSON file."""
     with open(path, "r") as f:
         content = json.load(f)
     logger.info(f"JSON file loaded successfully from: {path}")
-    return ConfigBox(content)
+    return Box(content)
 
 
 @ensure_annotations
