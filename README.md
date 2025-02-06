@@ -1,14 +1,13 @@
 ---
-title: Spotify Song Recommendation
-emoji: 🎵
+title: Spotify Recommandation
+emoji: 🐨
 colorFrom: blue
-colorTo: green
+colorTo: yellow
 sdk: streamlit
-sdk_version: "1.26.0"
+sdk_version: 1.42.0
 app_file: app.py
 pinned: false
 ---
-
 # 🎵 Spotify Song Recommendation System
 
 This is an **AI-powered Song Recommendation System** that clusters songs based on their audio features like danceability, energy, valence, etc., and provides song recommendations.  
