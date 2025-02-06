@@ -1,4 +1,4 @@
-name: Deploy to Hugging Face Spaces 
+name: Deploy to Hugging Face Spaces
 
 on:
   push:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures full history is cloned to avoid shallow update errors
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,33 +23,23 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Make sure this file exists!
-
-      - name: Check for Changes
-        run: |
-          git fetch origin main
-          git status
-          if git diff --quiet; then
-            echo "No changes detected, skipping deployment."
-            exit 0
-          fi
+          pip install -r requirements.txt  # Ensure this file exists!
 
       - name: Set up GitHub authentication
         run: |
           git config --global user.email "vemuboddupalli@gmail.com"
           git config --global user.name "lohithkumar12"
 
-      - name: Push changes to GitHub
+      - name: Ensure Hugging Face Remote Exists
         run: |
-          git add .
-          git commit -m "Auto-deploy from GitHub Actions" || echo "No new changes to commit"
-          git push https://github.com/lohithkumar12/spotify-song-recommendation.git HEAD:main || echo "No new changes to push"
+          git remote remove hf || echo "No previous remote found"
+          git remote add hf https://${{ secrets.HF_USERNAME }}:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git
+          git remote -v  # Verify remote URLs
 
-      - name: Upload to Hugging Face Spaces
+      - name: Push to Hugging Face Spaces
         run: |
-          git remote add hf https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation.git || echo "Remote already exists"
-          git push hf main --force
+          git pull --rebase hf main || echo "Nothing to pull"
+          git push hf main --force  # Full force push to update repo completely
         env:
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-
