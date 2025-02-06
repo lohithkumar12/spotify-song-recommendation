@@ -8,5 +8,6 @@ pyyaml
 joblib
 ensure
 box
+boxsdk
 
 
