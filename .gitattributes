@@ -1,0 +1,6 @@
+*.dll filter=lfs diff=lfs merge=lfs -text
+lfs filter=lfs diff=lfs merge=lfs -text
+track filter=lfs diff=lfs merge=lfs -text
+*.mapgit filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.pdbgit filter=lfs diff=lfs merge=lfs -text
