@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.10  # Use the same version as Hugging Face
+          python-version: 3.12  # Use the same version as Hugging Face
 
       - name: Install Dependencies
         run: |
