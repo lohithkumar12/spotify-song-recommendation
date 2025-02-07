@@ -1,39 +1,31 @@
 from spotify_recommendation.config.configuration import ConfigurationManager
-from spotify_recommendation.components.data_ingestion import DataIngestion
-from spotify_recommendation.logging import logger
+from spotify_recommendation.components.data_ingestion import SpotifyDataIngestion
+from spotify_recommendation.pipeline.model_trainer_pipeline import ModelTrainerTrainingPipeline
+from spotify_recommendation import logger
+import os
 
-STAGE_NAME = "Data Ingestion Stage"
+STAGE_NAME = "Spotify Data Ingestion & Model Retraining"
 
-class DataIngestionTrainingPipeline:
-    def __init__(self):
-        pass
+class DataUpdatePipeline:
+    def __init__(self, client_id, client_secret, playlist_id):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.playlist_id = playlist_id
 
-    def initiate_data_ingestion(self):
-        """Runs the data ingestion process."""
+    def initiate_data_update(self):
         try:
-            config = ConfigurationManager()
-            data_ingestion_config = config.get_data_ingestion_config()
-            data_ingestion = DataIngestion(config=data_ingestion_config)
+            # Fetch new song data
+            data_ingestion = SpotifyDataIngestion(self.client_id, self.client_secret)
+            new_data_path = data_ingestion.save_data(self.playlist_id)
 
-            # Check if dataset exists
-            data_ingestion.download_file()
+            # Check if data exists
+            if os.path.exists(new_data_path):
+                logger.info("✅ New data fetched successfully, initiating model retraining...")
+                model_trainer = ModelTrainerTrainingPipeline()
+                model_trainer.initiate_model_training()
+            else:
+                logger.warning("⚠️ No new data fetched. Skipping retraining.")
 
-            # Load dataset
-            df = data_ingestion.load_data()
-
-            logger.info(f"Data Ingestion completed successfully! Dataset contains {df.shape[0]} rows and {df.shape[1]} columns.")
-            return df
         except Exception as e:
-            logger.exception(f"Error in Data Ingestion: {str(e)}")
+            logger.exception(e)
             raise e
-
-
-if __name__ == "__main__":
-    try:
-        logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
-        obj = DataIngestionTrainingPipeline()
-        obj.initiate_data_ingestion()
-        logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n\nx==========x")
-    except Exception as e:
-        logger.exception(e)
-        raise e

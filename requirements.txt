@@ -9,3 +9,4 @@ joblib
 ensure
 python-box
 mlflow 
+"spotipy" 

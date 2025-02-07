@@ -36,6 +36,6 @@ class SpotifyDataIngestion:
 
         os.makedirs(os.path.dirname(self.output_file), exist_ok=True)
         df.to_csv(self.output_file, index=False)
-        logger.info(f"✅ Data saved successfully: {self.output_file}")
+        logger.info(f"Data saved successfully: {self.output_file}")
 
         return self.output_file
