@@ -1,20 +1,41 @@
-name: Sync to Hugging Face hub
+name: Auto Update Data & Deploy 🚀
+
 on:
   push:
     branches: [main]
-
-  # to run this workflow manually from the Actions tab
+  schedule:
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
-  sync-to-hub:
+  update-data:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch New Data & Retrain Model
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: |
+          python -c "from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline; 
+                     DataUpdatePipeline(client_id='$SPOTIFY_CLIENT_ID', 
+                     client_secret='$SPOTIFY_CLIENT_SECRET', 
+                     playlist_id='37i9dQZF1DXcBWIGoYBM5M').initiate_data_update()"
+
+      - name: Push Updated Model to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
