@@ -3,6 +3,7 @@ from spotify_recommendation.constants import CONFIG_FILE_PATH, PARAMS_FILE_PATH,
 from spotify_recommendation.entity.config_entity import (
     DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluationConfig, RecommendationConfig
 )
+import mlflow
 
 class ConfigurationManager:
     def __init__(self,
@@ -80,6 +81,11 @@ class ConfigurationManager:
             clustered_data_path=config["clustered_data_path"],
             model_path=config["model_path"]
         )
+    
+   
+
+mlflow.set_tracking_uri("sqlite:///mlruns.db") 
+
 
 
 
