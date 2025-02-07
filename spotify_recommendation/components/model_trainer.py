@@ -6,6 +6,7 @@ import mlflow.sklearn
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from spotify_recommendation.logging import logger
+from sklearn.model_selection import GridSearchCV
 from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 
@@ -27,26 +28,29 @@ class ModelTrainer:
         return df
 
     def train_kmeans(self, df):
-        """Trains K-Means clustering model with MLflow logging."""
+        """Trains K-Means clustering model with GridSearchCV for hyperparameter tuning."""
         feature_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+        X = df[feature_cols]
 
-        kmeans = KMeans(n_clusters=self.config.num_clusters, random_state=42)
-        df["Cluster_Label"] = kmeans.fit_predict(df[feature_cols])
+        # Define parameter grid
+        param_grid = {
+            'n_clusters': [3, 4, 5, 6, 7],  # Test different numbers of clusters
+            'init': ['k-means++', 'random']
+        }
 
-        # Log parameters to MLflow
-        mlflow.log_param("num_clusters", self.config.num_clusters)
-        mlflow.log_param("init_method", "k-means++")
+        # Corrected silhouette scorer function for GridSearchCV
+        silhouette_scorer = lambda estimator, X: silhouette_score(X, estimator.fit_predict(X))
 
-        # Compute evaluation metrics
-        silhouette = silhouette_score(df[feature_cols], df["Cluster_Label"])
-        mlflow.log_metric("silhouette_score", silhouette)
+        # Use GridSearchCV to find best cluster number
+        grid_search = GridSearchCV(KMeans(random_state=42), param_grid, cv=3, scoring=silhouette_scorer)
+        grid_search.fit(X)
 
-        # Save trained model
-        joblib.dump(kmeans, self.config.model_path)
-        mlflow.sklearn.log_model(kmeans, "kmeans_model") 
+        best_kmeans = grid_search.best_estimator_
 
-        logger.info(f"K-Means model trained with {self.config.num_clusters} clusters, silhouette score: {silhouette}")
-        return df
+        # Apply best model
+        df["Cluster_Label"] = best_kmeans.fit_predict(X)
+
+        return df, best_kmeans, grid_search
 
     def save_transformed_data(self, df):
         """Saves dataset with cluster labels."""
@@ -57,19 +61,34 @@ class ModelTrainer:
     def train_model(self):
         """Executes the full training pipeline with MLflow logging."""
         
+        # Ensure no active run exists
+        if mlflow.active_run():
+            mlflow.end_run()
+
+        mlflow.set_tracking_uri("http://127.0.0.1:5000")
         mlflow.set_experiment("Spotify Song Clustering")
 
         with mlflow.start_run():
             df = self.load_data()
-            df = self.train_kmeans(df)  # Training and adding cluster labels
+            df, best_kmeans, grid_search = self.train_kmeans(df)  # Training and adding cluster labels
             self.save_transformed_data(df)
+
+            # Compute metrics
+            silhouette = silhouette_score(df.select_dtypes(include=['float64', 'int64']), df["Cluster_Label"])
 
             # Log dataset size
             mlflow.log_param("num_rows", df.shape[0])
             mlflow.log_param("num_columns", df.shape[1])
 
-            # Log model path
-            mlflow.log_artifact(self.config.model_path)
+            # Log best hyperparameters
+            mlflow.log_param("best_n_clusters", grid_search.best_params_['n_clusters'])
+            mlflow.log_param("best_init", grid_search.best_params_['init'])
+            mlflow.log_metric("silhouette_score", silhouette)
+
+            # Log model to MLflow
+            mlflow.sklearn.log_model(best_kmeans, "kmeans_model")
+
+            # Save trained model locally
+            joblib.dump(best_kmeans, self.config.model_path)
 
             logger.info("Model training completed with MLflow tracking.")
-

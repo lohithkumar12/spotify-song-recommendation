@@ -1,3 +1,5 @@
+artifacts_root: artifacts/
+
 data_ingestion:
   root_dir: artifacts/data_ingestion
   dataset_path: data/rolling_stones_spotify.csv  # Updated from cleaned_data.csv
@@ -17,8 +19,8 @@ data_transformation:
 model_trainer:
   root_dir: artifacts/model_trainer
   model_path: artifacts/model_trainer/kmeans_model.pkl
-  preprocessor_path: artifacts/model_trainer/scaler.pkl
-  num_clusters: 5
+  preprocessor_path: artifacts/model_trainer/preprocessor.pkl
+
 
 model_evaluation:
   root_dir: artifacts/model_evaluation

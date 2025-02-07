@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 @dataclass
@@ -31,6 +31,11 @@ class ModelTrainerConfig:
     model_path: Path
     preprocessor_path: Path
     num_clusters: int
+    param_grid: dict = field(default_factory=lambda: {
+        'n_clusters': [3, 4, 5, 6, 7],
+        'init': ['k-means++', 'random']
+    })
+
 
 @dataclass
 class ModelEvaluationConfig:

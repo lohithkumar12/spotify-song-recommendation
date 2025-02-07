@@ -6,18 +6,17 @@ from spotify_recommendation.entity.config_entity import (
 import mlflow
 
 class ConfigurationManager:
-    def __init__(self,
-                 config_filepath=CONFIG_FILE_PATH,
-                 params_filepath=PARAMS_FILE_PATH,
-                 schema_filepath=SCHEMA_FILE_PATH):
-        """Initializes ConfigurationManager by reading config, params, and schema files."""
+    def __init__(self, config_filepath=CONFIG_FILE_PATH, params_filepath=PARAMS_FILE_PATH, schema_filepath=SCHEMA_FILE_PATH):
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
         self.schema = read_yaml(schema_filepath)
+        create_directories([self.config.artifacts_root])
 
-        # Ensure artifacts directory exists
-        artifacts_path = self.config.get("artifacts_root", "artifacts/")  # Use default if missing
-        create_directories([artifacts_path])
+        # Set MLflow Tracking URI (use local if testing, remote for Hugging Face)
+        mlflow.set_tracking_uri(uri="http://127.0.0.1:5000")
+        self.tracking_uri = mlflow.get_tracking_uri()
+        print(f"MLflow is tracking experiments at: {self.tracking_uri}")
+        
 
     def get_data_ingestion_config(self) -> DataIngestionConfig:
         """Retrieves data ingestion configurations from config.yaml."""
@@ -81,10 +80,8 @@ class ConfigurationManager:
             clustered_data_path=config["clustered_data_path"],
             model_path=config["model_path"]
         )
-    
-   
 
-mlflow.set_tracking_uri("sqlite:///mlruns.db") 
+
 
 
 
