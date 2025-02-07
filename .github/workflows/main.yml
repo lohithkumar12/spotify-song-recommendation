@@ -30,10 +30,14 @@ jobs:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
         run: |
-          python -c "from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline; 
-                     DataUpdatePipeline(client_id='$SPOTIFY_CLIENT_ID', 
-                     client_secret='$SPOTIFY_CLIENT_SECRET', 
-                     playlist_id='37i9dQZF1DXcBWIGoYBM5M').initiate_data_update()"
+          python -c "
+          from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline;
+          DataUpdatePipeline(
+              client_id='${{ secrets.SPOTIFY_CLIENT_ID }}',
+              client_secret='${{ secrets.SPOTIFY_CLIENT_SECRET }}',
+              playlist_id='37i9dQZF1DXcBWIGoYBM5M'
+          ).initiate_data_update()"
+
 
       - name: Push Updated Model to Hugging Face
         env:
