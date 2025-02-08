@@ -70,10 +70,8 @@ class ModelTrainer:
         mlflow.set_experiment("Spotify Song Clustering")
 
         # Authenticate with DAGsHub
-        mlflow.login(
-            username=os.getenv("MLFLOW_TRACKING_USERNAME"),
-            password=os.getenv("MLFLOW_TRACKING_PASSWORD")
-        )
+        os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
+        os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
         with mlflow.start_run():
             df = self.load_data()
