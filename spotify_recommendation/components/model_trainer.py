@@ -64,6 +64,15 @@ class ModelTrainer:
         # Ensure no active run exists
         if mlflow.active_run():
             mlflow.end_run()
+        
+        # Get environment variables safely
+        mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
+        mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
+        mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+        # Ensure values are not None
+        if not mlflow_uri or not mlflow_username or not mlflow_password:
+            raise ValueError("Missing MLflow credentials in GitHub Secrets.")
 
         # Use DAGsHub for MLflow tracking
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
