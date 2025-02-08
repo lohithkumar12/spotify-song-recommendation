@@ -45,7 +45,7 @@ class ModelTrainer:
 
         # Define parameter grid
         param_grid = {
-            'n_clusters': [3, 4, 5, 6, 7],  # Test different numbers of clusters
+            'n_clusters': [3, 4, 5, 6, 7],  
             'init': ['k-means++', 'random']
         }
 
