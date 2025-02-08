@@ -78,12 +78,24 @@ class ModelTrainer:
         mlflow.set_experiment("Spotify Song Clustering")
 
         # Authenticate with DAGsHub
-        os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
-        os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
+        #os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+        #os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
+        #os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
-        MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME")
-        MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD")
+        #MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME")
+        #MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD")
+        # Ensure all environment variables are loaded
+        MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "").strip()
+        MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME", "").strip()
+        MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD", "").strip()
+
+        # Validate that no variable is None or empty
+        if not MLFLOW_TRACKING_URI:
+            raise ValueError("Missing `MLFLOW_TRACKING_URI` in GitHub Secrets!")
+        if not MLFLOW_TRACKING_USERNAME:
+            raise ValueError(" Missing `MLFLOW_TRACKING_USERNAME` in GitHub Secrets!")
+        if not MLFLOW_TRACKING_PASSWORD:
+            raise ValueError(" Missing `MLFLOW_TRACKING_PASSWORD` in GitHub Secrets!")
 
         # Authenticate with DAGsHub for MLflow tracking
         dagshub.auth.add_basic_auth(MLFLOW_TRACKING_USERNAME, MLFLOW_TRACKING_PASSWORD)
