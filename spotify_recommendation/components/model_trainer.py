@@ -11,7 +11,7 @@ from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
 
-dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True, token='your_personal_access_token')
+dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True, token='78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5')
 
 os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
 os.environ["MLFLOW_TRACKING_USERNAME"]="vemuboddupalli"
