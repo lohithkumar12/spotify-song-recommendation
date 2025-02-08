@@ -14,7 +14,7 @@ dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', ml
 
 os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
 os.environ["MLFLOW_TRACKING_USERNAME"]="vemuboddupalli"
-os.environ["MLFLOW_TRACKING_PASSWORD"]="7ec2fdce1f60a0cbd7315b23f3ecc87eee23a97a"
+os.environ["MLFLOW_TRACKING_PASSWORD"]="78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5"
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
