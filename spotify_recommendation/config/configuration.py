@@ -15,9 +15,9 @@ class ConfigurationManager:
 
         # Set MLflow Tracking URI (use local if testing, remote for Hugging Face)
         #mlflow.set_tracking_uri(uri="http://127.0.0.1:5000")
-        mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-        self.tracking_uri = mlflow.get_tracking_uri()
-        print(f"MLflow is tracking experiments at: {self.tracking_uri}")
+        #mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+        #self.tracking_uri = mlflow.get_tracking_uri()
+        #print(f"MLflow is tracking experiments at: {self.tracking_uri}")
         
 
     def get_data_ingestion_config(self) -> DataIngestionConfig:
