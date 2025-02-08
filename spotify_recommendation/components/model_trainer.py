@@ -10,7 +10,11 @@ from sklearn.model_selection import GridSearchCV
 from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
-#dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
+dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
+
+os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+os.environ["MLFLOW_TRACKING_USERNAME"]="vemuboddupalli"
+os.environ["MLFLOW_TRACKING_PASSWORD"]="7811468f731998e165fe35ec40328240da8efb9e"
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
@@ -78,32 +82,14 @@ class ModelTrainer:
         mlflow.set_experiment("Spotify Song Clustering")
 
         # Authenticate with DAGsHub
-        os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+        #os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
         #os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
         #os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
-        #MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME")
-        #MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD")
-        # Ensure all environment variables are loaded
-        #MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "").strip()
-        MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME", "").strip()
-        MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD", "").strip()
 
-        # Validate that no variable is None or empty
-        #if not MLFLOW_TRACKING_URI:
-            #raise ValueError("Missing `MLFLOW_TRACKING_URI` in GitHub Secrets!")
-        if not MLFLOW_TRACKING_USERNAME:
-            raise ValueError(" Missing `MLFLOW_TRACKING_USERNAME` in GitHub Secrets!")
-        if not MLFLOW_TRACKING_PASSWORD:
-            raise ValueError(" Missing `MLFLOW_TRACKING_PASSWORD` in GitHub Secrets!")
-
-        # Authenticate with DAGsHub for MLflow tracking
-        dagshub.auth.add_basic_auth(MLFLOW_TRACKING_USERNAME, MLFLOW_TRACKING_PASSWORD)
-        dagshub.init(repo_owner=MLFLOW_TRACKING_USERNAME, repo_name="spotify-recommendation", mlflow=True)
         
-        # Ensure credentials are set before training
-        if not MLFLOW_TRACKING_USERNAME or not MLFLOW_TRACKING_PASSWORD:
-            raise ValueError("Missing MLflow credentials in GitHub Secrets!")
+
+        
 
         with mlflow.start_run():
             df = self.load_data()
