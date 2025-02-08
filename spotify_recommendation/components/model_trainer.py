@@ -10,7 +10,7 @@ from sklearn.model_selection import GridSearchCV
 from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
-dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
+#dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
@@ -64,8 +64,8 @@ class ModelTrainer:
         """Executes the full training pipeline with MLflow logging."""
         
         # Ensure no active run exists
-        if mlflow.active_run():
-            mlflow.end_run()
+        #if mlflow.active_run():
+           # mlflow.end_run()
         
         # Get environment variables safely
         #mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
@@ -81,6 +81,17 @@ class ModelTrainer:
         os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
         os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
         os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+        MLFLOW_TRACKING_USERNAME = os.getenv("MLFLOW_TRACKING_USERNAME")
+        MLFLOW_TRACKING_PASSWORD = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+        # Authenticate with DAGsHub for MLflow tracking
+        dagshub.auth.add_basic_auth(MLFLOW_TRACKING_USERNAME, MLFLOW_TRACKING_PASSWORD)
+        dagshub.init(repo_owner=MLFLOW_TRACKING_USERNAME, repo_name="spotify-recommendation", mlflow=True)
+        
+        # Ensure credentials are set before training
+        if not MLFLOW_TRACKING_USERNAME or not MLFLOW_TRACKING_PASSWORD:
+            raise ValueError("Missing MLflow credentials in GitHub Secrets!")
 
         with mlflow.start_run():
             df = self.load_data()
