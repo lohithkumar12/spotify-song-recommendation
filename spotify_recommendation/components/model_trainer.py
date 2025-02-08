@@ -10,7 +10,8 @@ from sklearn.model_selection import GridSearchCV
 from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
-dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
+
+dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True, token='your_personal_access_token')
 
 os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
 os.environ["MLFLOW_TRACKING_USERNAME"]="vemuboddupalli"
