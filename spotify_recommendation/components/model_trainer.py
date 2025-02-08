@@ -70,9 +70,13 @@ class ModelTrainer:
         mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
         mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
-        # Ensure values are not None
-        if not mlflow_uri or not mlflow_username or not mlflow_password:
-            raise ValueError("Missing MLflow credentials in GitHub Secrets.")
+        if not mlflow_uri:
+            raise ValueError("MLFLOW_TRACKING_URI is missing in GitHub Secrets.")
+        if not mlflow_username:
+            raise ValueError("MLFLOW_TRACKING_USERNAME is missing in GitHub Secrets.")
+        if not mlflow_password:
+            raise ValueError("MLFLOW_TRACKING_PASSWORD is missing in GitHub Secrets.")
+
 
         # Use DAGsHub for MLflow tracking
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
