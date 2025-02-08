@@ -4,6 +4,7 @@ from spotify_recommendation.entity.config_entity import (
     DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig, ModelEvaluationConfig, RecommendationConfig
 )
 import mlflow
+import os
 
 class ConfigurationManager:
     def __init__(self, config_filepath=CONFIG_FILE_PATH, params_filepath=PARAMS_FILE_PATH, schema_filepath=SCHEMA_FILE_PATH):
