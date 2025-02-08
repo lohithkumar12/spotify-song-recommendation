@@ -1,4 +1,4 @@
-name: Auto Update Data & Deploy 🚀
+name: Auto Update Data & Deploy
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
           DataUpdatePipeline(
               client_id='${{ secrets.SPOTIFY_CLIENT_ID }}',
               client_secret='${{ secrets.SPOTIFY_CLIENT_SECRET }}',
-              playlist_id='37i9dQZEVXbK4NvPi6Sxit'
+              playlist_id='5fCbYbykLg85EVHHYrkgLw'
           ).initiate_data_update()"
 
 
