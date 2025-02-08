@@ -11,16 +11,15 @@ from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
 
-dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True, token='78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5')
+dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
 
 os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
-os.environ["MLFLOW_TRACKING_USERNAME"]="vemuboddupalli"
-os.environ["MLFLOW_TRACKING_PASSWORD"]="78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5"
 
-mlflow.login(
-    username=os.getenv("MLFLOW_TRACKING_USERNAME"),
-    password=os.getenv("MLFLOW_TRACKING_PASSWORD")
-)
+# Authenticate with DAGsHub using environment variables
+os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME", "vemuboddupalli")
+os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD", "78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5")
+
+
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
