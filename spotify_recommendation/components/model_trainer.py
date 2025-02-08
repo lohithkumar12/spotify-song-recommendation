@@ -65,8 +65,15 @@ class ModelTrainer:
         if mlflow.active_run():
             mlflow.end_run()
 
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        # Use DAGsHub for MLflow tracking
+        mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
         mlflow.set_experiment("Spotify Song Clustering")
+
+        # Authenticate with DAGsHub
+        mlflow.login(
+            username=os.getenv("MLFLOW_TRACKING_USERNAME"),
+            password=os.getenv("MLFLOW_TRACKING_PASSWORD")
+        )
 
         with mlflow.start_run():
             df = self.load_data()
