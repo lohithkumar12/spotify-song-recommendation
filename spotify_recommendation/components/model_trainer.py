@@ -71,7 +71,7 @@ class ModelTrainer:
         mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
         if not mlflow_uri:
-            raise ValueError("MLFLOW_TRACKING_URI is missing in GitHub Secrets.")
+            raise ValueError("MLFLOW_TRACKING_URI is missing in GitHub Secrets. Go to")
         if not mlflow_username:
             raise ValueError("MLFLOW_TRACKING_USERNAME is missing in GitHub Secrets.")
         if not mlflow_password:
