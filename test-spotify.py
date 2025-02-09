@@ -1,17 +1,25 @@
-import os
-import dagshub
-import mlflow
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
-# Set MLflow Tracking URI from environment
-os.environ["MLFLOW_TRACKING_URI"] = "https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
-os.environ["MLFLOW_TRACKING_USERNAME"] = "vemuboddupalli"
-os.environ["MLFLOW_TRACKING_PASSWORD"] = "78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5"  # Fetch securely
+# Set credentials
+client_id = "f2e62d2b58e044bba3529a391565da78"
+client_secret = "4125a139a17c465b93a166b13d9f4ad3"
 
-dagshub.init(
-    repo_owner="vemuboddupalli",
-    repo_name="spotify-recommendation",
-    mlflow=True
-)
+# Authenticate
+try:
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
+    # Fetch songs from the playlist
+    playlist_tracks = sp.playlist_tracks("5fCbYbykLg85EVHHYrkgLw")
 
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-print(f"✅ MLflow tracking URI: {mlflow.get_tracking_uri()}")
+    # Extract song names
+    song_list = [track["track"]["name"] + " - " + track["track"]["artists"][0]["name"] for track in playlist_tracks["items"]]
+
+    # Print the fetched songs
+    print("\nLatest Songs in Playlist:")
+    for idx, song in enumerate(song_list, 1):
+        print(f"{idx}. {song}")
+
+except Exception as e:
+    print(f"❌ Error: {e}")
+
+

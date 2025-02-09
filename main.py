@@ -1,22 +1,28 @@
 from spotify_recommendation.logging import logger
-from spotify_recommendation.pipeline.data_ingestion_pipeline import DataIngestionTrainingPipeline
+from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline
 from spotify_recommendation.pipeline.data_validation_pipeline import DataValidationTrainingPipeline
 from spotify_recommendation.pipeline.data_transformation_pipeline import DataTransformationPipeline
 from spotify_recommendation.pipeline.model_trainer_pipeline import ModelTrainerPipeline
 from spotify_recommendation.pipeline.model_evaluation_pipeline import ModelEvaluationPipeline
 
-STAGE_NAME = "Data Ingestion Stage"
 
+
+STAGE_NAME = "Data Ingestion Stage"
 try:
     logger.info(f">>>>>> {STAGE_NAME} started <<<<<<")
-    data_ingestion = DataIngestionTrainingPipeline()
-    data_ingestion.initiate_data_ingestion()
-    logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<\n\nx==========x")
+    
+    data_ingestion = DataUpdatePipeline(
+        client_id="f2e62d2b58e044bba3529a391565da78",
+        client_secret="4125a139a17c465b93a166b13d9f4ad3",
+        playlist_id="5fCbYbykLg85EVHHYrkgLw"
+    )
+    
+    data_ingestion.initiate_data_update()
+    logger.info(f">>>>>> {STAGE_NAME} completed <<<<<<")
+
 except Exception as e:
     logger.exception(e)
     raise e
-
-
 
 
 STAGE_NAME = "Data Validation Stage"
