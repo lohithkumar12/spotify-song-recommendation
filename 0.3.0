@@ -1,0 +1,15 @@
+Usage: dagshub [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --host TEXT  Hostname of DagsHub instance. Can also be set by
+               'DAGSHUB_CLIENT_HOST' environment variable
+  -q, --quiet  Suppress print output
+  --help       Show this message and exit.
+
+Commands:
+  download  Download REMOTE_PATH from REPO to LOCAL_PATH
+  upload    Upload FILENAME to REPO at location TARGET.
+  setup     Initialize additional functionality in the current repository
+  login     Initiate an Oauth authentication process.
+  version   Prints the current installed version of the DagsHub client
+  repo      Operations on repo: currently only 'create'

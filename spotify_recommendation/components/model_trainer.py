@@ -11,9 +11,15 @@ from spotify_recommendation.entity.config_entity import ModelTrainerConfig
 
 import dagshub
 
-# Initialize DagsHub with a PAT
-dagshub_token = os.getenv("DAGSHUB_TOKEN")  # Ensure this is set in your GitHub Secrets
-dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True, token=dagshub_token)
+dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
+
+#os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+
+# Authenticate with DAGsHub using environment variables
+#os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME", "vemuboddupalli")
+#os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD", "78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5")
+
+
 
 class ModelTrainer:
     def __init__(self, config: ModelTrainerConfig):
@@ -21,9 +27,11 @@ class ModelTrainer:
 
     def load_data(self):
         """Loads transformed dataset for training."""
+        if not os.path.exists(self.config.root_dir):
+            os.makedirs(self.config.root_dir, exist_ok=True)
+
         data_path = os.path.join("artifacts/data_transformation/cleaned_rolling_stones_spotify.csv")
         if not os.path.exists(data_path):
-            logger.error(f"Transformed dataset not found at {data_path}")
             raise FileNotFoundError(f"Transformed dataset not found at {data_path}")
 
         df = pd.read_csv(data_path)
@@ -63,7 +71,30 @@ class ModelTrainer:
 
     def train_model(self):
         """Executes the full training pipeline with MLflow logging."""
+        
+        # Ensure no active run exists
+        #if mlflow.active_run():
+           # mlflow.end_run()
+        
+        # Get environment variables safely
+        #mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
+        #mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
+        #mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+
+        # Use DAGsHub for MLflow tracking
+        #mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
         mlflow.set_experiment("Spotify Song Clustering")
+
+        # Authenticate with DAGsHub
+        #os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+        #os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
+        #os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
+
+
+        
+
+        
 
         with mlflow.start_run():
             df = self.load_data()
