@@ -4,12 +4,13 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
   workflow_dispatch:
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -25,7 +26,7 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-      - name: Fetch New Data & Retrain Model
+      - name: Authenticate & Fetch New Data
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
@@ -33,10 +34,12 @@ jobs:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
-          export MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
-          export MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}
-          export MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          # Setup environment variables
+          echo "MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}" >> $GITHUB_ENV
 
+          # Run Data Ingestion Pipeline
           python -c "
           from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline;
           DataUpdatePipeline(
@@ -45,9 +48,26 @@ jobs:
               playlist_id='5fCbYbykLg85EVHHYrkgLw'
           ).initiate_data_update()"
 
+      - name: Train & Log Model with MLflow
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+        run: |
+          python -c "
+          from spotify_recommendation.pipeline.model_trainer_pipeline import ModelTrainerPipeline;
+          ModelTrainerPipeline().initiate_model_training()"
 
+      - name: Commit Updated Model
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "your-github-username"
+          git add .
+          git commit -m 'Auto-updated dataset and model' || echo "No changes to commit"
+          git push origin main
 
       - name: Push Updated Model to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
+        run: |
+          git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
