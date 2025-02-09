@@ -32,10 +32,15 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           DAGSHUB_TOKEN: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
-          # Setup environment variables
+          # Set DAGsHub MLflow Authentication
           echo "MLFLOW_TRACKING_URI=https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow" >> $GITHUB_ENV
           echo "MLFLOW_TRACKING_USERNAME=vemuboddupalli" >> $GITHUB_ENV
           echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}" >> $GITHUB_ENV
+
+          # Manually Authenticate DAGsHub
+          git config --global credential.helper store
+          git credential reject "https://dagshub.com"
+          echo "https://vemuboddupalli:${{ secrets.MLFLOW_TRACKING_PASSWORD }}@dagshub.com" >> ~/.git-credentials
 
           # Run Data Ingestion Pipeline
           python -c "
@@ -61,8 +66,8 @@ jobs:
           git config --global user.email "vemuboddupalli@gmail.com"
           git config --global user.name "lohithkumar12"
           git add .
-          git commit -m '🚀 Auto-updated dataset & model' || echo "⚠️ No changes to commit"
-          git push origin main || echo "⚠️ No changes to push"
+          git commit -m 'Auto-updated dataset & model' || echo "No changes to commit"
+          git push origin main || echo "No changes to push"
 
       - name: Push Updated Model to Hugging Face
         env:
