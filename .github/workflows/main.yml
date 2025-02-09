@@ -33,6 +33,10 @@ jobs:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
         run: |
+          export MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
+          export MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          export MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+
           python -c "
           from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline;
           DataUpdatePipeline(
@@ -40,6 +44,7 @@ jobs:
               client_secret='${{ secrets.SPOTIFY_CLIENT_SECRET }}',
               playlist_id='5fCbYbykLg85EVHHYrkgLw'
           ).initiate_data_update()"
+
 
 
       - name: Push Updated Model to Hugging Face
