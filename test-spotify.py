@@ -1,19 +1,17 @@
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
+import os
+import dagshub
+import mlflow
 
-# Set credentials
-client_id = "f2e62d2b58e044bba3529a391565da78"
-client_secret = "4125a139a17c465b93a166b13d9f4ad3"
+# Set MLflow Tracking URI from environment
+os.environ["MLFLOW_TRACKING_URI"] = "https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
+os.environ["MLFLOW_TRACKING_USERNAME"] = "vemuboddupalli"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5"  # Fetch securely
 
-# Authenticate
-try:
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id, client_secret=client_secret))
-    print("✅ Authentication Successful!")
-    
-    # Fetch playlist details
-    playlist_id = "5fCbYbykLg85EVHHYrkgLw"
-    playlist = sp.playlist_tracks(playlist_id)
-    print(f"✅ Fetched {len(playlist['items'])} tracks successfully!")
+dagshub.init(
+    repo_owner="vemuboddupalli",
+    repo_name="spotify-recommendation",
+    mlflow=True
+)
 
-except Exception as e:
-    print(f"❌ Error: {e}")
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+print(f"✅ MLflow tracking URI: {mlflow.get_tracking_uri()}")
