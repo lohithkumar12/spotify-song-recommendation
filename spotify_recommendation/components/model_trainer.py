@@ -3,16 +3,18 @@ import joblib
 import pandas as pd
 import mlflow
 import mlflow.sklearn
+import dagshub
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.decomposition import PCA
+
 from spotify_recommendation.logging import logger
 from spotify_recommendation.entity.config_entity import ModelTrainerConfig
-import dagshub
 
-# Initialize DAGsHub MLflow Tracking
+# Initialize DAGsHub MLflow tracking
 dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
 
 class ModelTrainer:
@@ -37,7 +39,7 @@ class ModelTrainer:
         feature_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
         X = df[feature_cols]
 
-        # Define parameter grid for K-Means tuning
+        # Define parameter grid
         param_grid = {
             'n_clusters': [3, 4, 5, 6, 7],  
             'init': ['k-means++', 'random']
@@ -46,7 +48,7 @@ class ModelTrainer:
         # Corrected silhouette scorer function for GridSearchCV
         silhouette_scorer = lambda estimator, X: silhouette_score(X, estimator.fit_predict(X))
 
-        # Use GridSearchCV to find the best cluster number
+        # Use GridSearchCV to find best cluster number
         grid_search = GridSearchCV(KMeans(random_state=42), param_grid, cv=3, scoring=silhouette_scorer)
         grid_search.fit(X)
 
@@ -63,18 +65,27 @@ class ModelTrainer:
         df.to_csv(output_path, index=False)
         logger.info(f"Clustered dataset saved at {output_path}")
 
-    def plot_clusters(self, df):
-        """Generates and logs K-Means cluster visualization."""
-        plt.figure(figsize=(8, 6))
-        sns.scatterplot(
-            x=df["energy"], y=df["valence"], hue=df["Cluster_Label"],
-            palette="viridis", alpha=0.7
-        )
-        plt.title("K-Means Clustering of Songs (Energy vs Valence)")
-        plot_path = os.path.join(self.config.root_dir, "cluster_plot.png")
-        plt.savefig(plot_path)
+    def visualize_clusters(self, df):
+        """Generates and saves a K-Means cluster visualization using PCA for dimensionality reduction."""
+        feature_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+        X = df[feature_cols]
+
+        # Reduce dimensions to 2D using PCA
+        pca = PCA(n_components=2, random_state=42)
+        pca_features = pca.fit_transform(X)
+
+        # Create scatter plot
+        plt.figure(figsize=(10, 6))
+        sns.scatterplot(x=pca_features[:, 0], y=pca_features[:, 1], hue=df['Cluster_Label'], palette='viridis')
+        plt.title("K-Means Clustering Visualization (PCA Reduced Features)")
+
+        # Save plot
+        cluster_plot_path = os.path.join(self.config.root_dir, "kmeans_cluster_plot.png")
+        plt.savefig(cluster_plot_path)
         plt.close()
-        return plot_path
+        
+        logger.info(f"Cluster visualization saved at {cluster_plot_path}")
+        return cluster_plot_path
 
     def train_model(self):
         """Executes the full training pipeline with MLflow logging."""
@@ -98,21 +109,15 @@ class ModelTrainer:
             mlflow.log_param("best_init", grid_search.best_params_['init'])
             mlflow.log_metric("silhouette_score", silhouette)
 
+            # Generate and log cluster visualization
+            cluster_plot_path = self.visualize_clusters(df)
+            mlflow.log_artifact(cluster_plot_path, artifact_path="cluster_visualizations")
+
             # Log model to MLflow
             mlflow.sklearn.log_model(best_kmeans, "kmeans_model")
 
             # Save trained model locally
             joblib.dump(best_kmeans, self.config.model_path)
 
-            # Log dataset sample (10 records)
-            sample_data_path = os.path.join(self.config.root_dir, "sample_clustered_data.csv")
-            df.sample(10).to_csv(sample_data_path, index=False)
-            mlflow.log_artifact(sample_data_path, artifact_path="data_samples")
-            logger.info("Logged dataset sample to MLflow.")
-
-            # Log Cluster Visualization
-            plot_path = self.plot_clusters(df)
-            mlflow.log_artifact(plot_path, artifact_path="plots")
-            logger.info("Cluster plot logged to MLflow.")
-
             logger.info("Model training completed with MLflow tracking.")
+
