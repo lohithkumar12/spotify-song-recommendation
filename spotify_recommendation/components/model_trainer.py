@@ -13,12 +13,6 @@ import dagshub
 
 dagshub.init(repo_owner='vemuboddupalli', repo_name='spotify-recommendation', mlflow=True)
 
-#os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
-
-# Authenticate with DAGsHub using environment variables
-#os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME", "vemuboddupalli")
-#os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD", "78e1305697f7e893b4ecb7e5e8b2b276ef61c6e5")
-
 
 
 class ModelTrainer:
@@ -71,30 +65,9 @@ class ModelTrainer:
 
     def train_model(self):
         """Executes the full training pipeline with MLflow logging."""
-        
-        # Ensure no active run exists
-        #if mlflow.active_run():
-           # mlflow.end_run()
-        
-        # Get environment variables safely
-        #mlflow_uri = os.getenv("MLFLOW_TRACKING_URI")
-        #mlflow_username = os.getenv("MLFLOW_TRACKING_USERNAME")
-        #mlflow_password = os.getenv("MLFLOW_TRACKING_PASSWORD")
 
-
-        # Use DAGsHub for MLflow tracking
-        #mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
         mlflow.set_experiment("Spotify Song Clustering")
 
-        # Authenticate with DAGsHub
-        #os.environ["MLFLOW_TRACKING_URI"]="https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow"
-        #os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_TRACKING_USERNAME")
-        #os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("MLFLOW_TRACKING_PASSWORD")
-
-
-        
-
-        
 
         with mlflow.start_run():
             df = self.load_data()
