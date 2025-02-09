@@ -30,23 +30,24 @@ jobs:
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          DAGSHUB_TOKEN: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          DAGSHUB_USERNAME: vemuboddupalli
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}  # Ensure this is correctly set in GitHub Secrets
         run: |
           # Set DAGsHub MLflow Authentication
-          echo "MLFLOW_TRACKING_URI=https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow" >> $GITHUB_ENV
-          echo "MLFLOW_TRACKING_USERNAME=vemuboddupalli" >> $GITHUB_ENV
-          echo "MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_URI=https://dagshub.com/${{ env.DAGSHUB_USERNAME }}/spotify-recommendation.mlflow" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_USERNAME=${{ env.DAGSHUB_USERNAME }}" >> $GITHUB_ENV
+          echo "MLFLOW_TRACKING_PASSWORD=${{ env.DAGSHUB_TOKEN }}" >> $GITHUB_ENV
 
           # Authenticate DAGsHub using PAT (Bypassing OAuth)
           git config --global credential.helper store
-          echo "https://vemuboddupalli:${{ secrets.MLFLOW_TRACKING_PASSWORD }}@dagshub.com" > ~/.git-credentials
+          echo "https://${{ env.DAGSHUB_USERNAME }}:${{ env.DAGSHUB_TOKEN }}@dagshub.com" > ~/.git-credentials
 
           # Run Data Ingestion Pipeline
           python -c "
           from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline;
           DataUpdatePipeline(
-              client_id='${{ secrets.SPOTIFY_CLIENT_ID }}',
-              client_secret='${{ secrets.SPOTIFY_CLIENT_SECRET }}',
+              client_id='${{ env.SPOTIFY_CLIENT_ID }}',
+              client_secret='${{ env.SPOTIFY_CLIENT_SECRET }}',
               playlist_id='5fCbYbykLg85EVHHYrkgLw'
           ).initiate_data_update()"
 
@@ -54,7 +55,7 @@ jobs:
         env:
           MLFLOW_TRACKING_URI: https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow
           MLFLOW_TRACKING_USERNAME: vemuboddupalli
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
           python -c "
           from spotify_recommendation.pipeline.model_trainer_pipeline import ModelTrainerPipeline;
