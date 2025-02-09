@@ -4,13 +4,12 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+    - cron: '0 0 * * *'  # Runs daily at midnight
   workflow_dispatch:
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -26,51 +25,27 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-      - name: Authenticate & Fetch New Data
+      - name: Fetch New Data & Retrain Model
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          DAGSHUB_USERNAME: vemuboddupalli
-          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}  # Ensure this is correctly set in GitHub Secrets
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}  # Add DAGSHUB_TOKEN
         run: |
-          # Set DAGsHub MLflow Authentication
-          echo "MLFLOW_TRACKING_URI=https://dagshub.com/${{ env.DAGSHUB_USERNAME }}/spotify-recommendation.mlflow" >> $GITHUB_ENV
-          echo "MLFLOW_TRACKING_USERNAME=${{ env.DAGSHUB_USERNAME }}" >> $GITHUB_ENV
-          echo "MLFLOW_TRACKING_PASSWORD=${{ env.DAGSHUB_TOKEN }}" >> $GITHUB_ENV
-
-          # Authenticate DAGsHub using PAT (Bypassing OAuth)
-          git config --global credential.helper store
-          echo "https://${{ env.DAGSHUB_USERNAME }}:${{ env.DAGSHUB_TOKEN }}@dagshub.com" > ~/.git-credentials
-
-          # Run Data Ingestion Pipeline
+          # Fetch new data
           python -c "
           from spotify_recommendation.pipeline.data_ingestion_pipeline import DataUpdatePipeline;
           DataUpdatePipeline(
-              client_id='${{ env.SPOTIFY_CLIENT_ID }}',
-              client_secret='${{ env.SPOTIFY_CLIENT_SECRET }}',
+              client_id='${{ secrets.SPOTIFY_CLIENT_ID }}',
+              client_secret='${{ secrets.SPOTIFY_CLIENT_SECRET }}',
               playlist_id='5fCbYbykLg85EVHHYrkgLw'
           ).initiate_data_update()"
 
-      - name: Train & Log Model with MLflow
-        env:
-          MLFLOW_TRACKING_URI: https://dagshub.com/vemuboddupalli/spotify-recommendation.mlflow
-          MLFLOW_TRACKING_USERNAME: vemuboddupalli
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
-        run: |
+          # Retrain the model
           python -c "
           from spotify_recommendation.pipeline.model_trainer_pipeline import ModelTrainerPipeline;
-          ModelTrainerPipeline().initiate_model_training()"
-
-      - name: Commit Updated Model
-        run: |
-          git config --global user.email "vemuboddupalli@gmail.com"
-          git config --global user.name "lohithkumar12"
-          git add .
-          git commit -m '🚀 Auto-updated dataset & model' || echo "⚠️ No changes to commit"
-          git push origin main || echo "⚠️ No changes to push"
+          ModelTrainerPipeline().train_model()"
 
       - name: Push Updated Model to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main || echo "⚠️ No changes to push"
+        run: git push --force https://lohithkumar01:$HF_TOKEN@huggingface.co/spaces/lohithkumar01/spotify-song-recommendation main
