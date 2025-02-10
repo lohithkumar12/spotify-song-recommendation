@@ -1,6 +1,14 @@
-Here is the **finalized README.md** with all necessary details, including the **Spotify API issue, Hugging Face deployment, DAGsHub MLflow integration, and CI/CD automation**.
-
 ---
+title: Spotify Song Recommendation
+emoji: 🎵
+colorFrom: blue
+colorTo: yellow
+sdk: streamlit
+sdk_version: "1.42.0"
+app_file: app.py
+pinned: false
+---
+
 
 # 🎵 **Spotify Song Recommendation System**
 
